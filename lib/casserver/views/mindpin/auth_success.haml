@@ -1,0 +1,43 @@
+:ruby
+  urls = {
+    'pophour' => 'http://dev.www.pophour.com:3001/crosslogin',
+    '17ngo'   => 'http://dev.www.17ngo.com:3002/crosslogin',
+  }
+
+  js = @st_hash.map {|app, st|
+    "jQuery.ajax({
+      url  :'#{urls[app]}',
+      data : {
+        'st' : '#{st}',
+        'remember_me' : '#{@remember_me}'
+      },
+      dataType:'jsonp', 
+      success:jsonphandle
+    });"
+  }.join('')
+  
+  
+  jump_url = {
+    'pophour' => 'http://dev.www.pophour.com:3001/ajax_login_success',
+    '17ngo'   => 'http://dev.www.17ngo.com:3002/ajax_login_success',
+  }[@app]
+  
+%html
+  %head
+    %title 登录成功
+  %body
+    <script src="http://dev.ui.mindpin.com/javascripts/lib/jquery/jquery-1.7.1.min.noconflict.js" type="text/javascript"></script>
+    :javascript
+      var sso_cross_timer = setTimeout(function(){
+        location.replace('#{jump_url}');
+      }, 3000)
+    
+      var count = 2;
+      var jsonphandle = function(res){
+        count = count - 1;
+        if(0 == count){
+          delete sso_cross_timer;
+          location.replace('#{jump_url}');
+        }
+      }
+      #{js}

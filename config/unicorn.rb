@@ -2,7 +2,7 @@
 #
 # See http://unicorn.bogomips.org/Unicorn/Configurator.html for complete
 # documentation.
-SINATRA_ROOT = `pwd`.strip
+SINATRA_ROOT = "/web/2010/mindpin-sso"
 
 # Use at least one worker per core if you're on a dedicated server,
 # more will usually help for _short_ waits on databases/caches.
@@ -14,8 +14,7 @@ working_directory SINATRA_ROOT # available in 0.94.0+
 
 # listen on both a Unix domain socket and a TCP port,
 # we use a shorter backlog for quicker failover when busy
-# listen "/tmp/.sock", :backlog => 64
-listen 18889, :tcp_nopush => true
+ listen "#{SINATRA_ROOT}/tmp/sockets/casserver.sock", :backlog => 64
 
 # nuke workers after 30 seconds instead of 60 seconds (the default)
 timeout 30

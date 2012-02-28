@@ -1,0 +1,37 @@
+:ruby
+  urls = {
+    'pophour' => 'http://dev.www.pophour.com:3001/crosslogout',
+    '17ngo'   => 'http://dev.www.17ngo.com:3002/crosslogout',
+  }
+
+  js = urls.map {|app, logout_url|
+    "jQuery.ajax({url:'#{logout_url}', dataType:'jsonp', success:jsonphandle});"
+  }.join('')
+  
+  
+  jump_url = {
+    'pophour' => 'http://dev.www.pophour.com:3001',
+    '17ngo'   => 'http://dev.www.17ngo.com:3002',
+  }[@from]
+  
+%html
+  %head
+    %title 正在登出…
+  %body
+    .tip 正在登出…
+
+    <script src="http://dev.ui.mindpin.com/javascripts/lib/jquery/jquery-1.7.1.min.noconflict.js" type="text/javascript"></script>
+    :javascript
+      var sso_cross_timer = setTimeout(function(){
+        location.replace('#{jump_url}');
+      }, 3000)
+    
+      var count = 2;
+      var jsonphandle = function(res){
+        count = count - 1;
+        if(0 == count){
+          delete sso_cross_timer;
+          location.replace('#{jump_url}');
+        }
+      }
+      #{js}

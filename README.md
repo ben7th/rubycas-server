@@ -1,19 +1,35 @@
-# RubyCAS-Server ![http://stillmaintained.com/rubycas/rubycas-server](http://stillmaintained.com/rubycas/rubycas-server.png)
+# MINDPIN SSO 验证服务，基于 RubyCas 修改而来
 
-## Copyright
+需要进行单点登录的工程，引用Client的方法：
 
-Portions contributed by Matt Zukowski are copyright (c) 2011 Urbacon Ltd.
-Other portions are copyright of their respective authors.
+1 在 config.autoload_paths 中增加Client相关代码的引用路径，如：
+  config.autoload_paths += Dir["/web/2010/mindpin-sso/lib/custom_lib/**/"]
 
-## Authors
+2 在 routes 配置里增加如下配置：
 
-See http://github.com/gunark/rubycas-server/commits/
+  get '/ajax_login_failure' => 'sso_auth#ajax_login_failure'
+  get '/crosslogin'         => 'sso_auth#crosslogin'
+  get '/ajax_login_success' => 'sso_auth#ajax_login_success'
+  get '/crosslogout'        => 'sso_auth#crosslogout'
+  
+3 增加 SsoAuthController 代码如下：
 
-## Installation
+  class SsoAuthController < ApplicationController
+    include SSOClientControllerMethods
+    skip_before_filter :sso_validate_st
+    
+    def login
+    end
+  end
+  
+4 在 ApplicationController 添加如下声明
 
-See http://code.google.com/p/rubycas-server
-
-## License
-
-RubyCAS-Server is licensed for use under the terms of the MIT License.
-See the LICENSE file bundled with the official RubyCAS-Server distribution for details.
+  class ApplicationController < ActionController::Base
+    # ....
+  
+    include SSOAuthenticatedSystem
+    def _this_app_name; '应用名称'; end
+    before_filter :sso_validate_st
+  end
+  
+5 在 User 类 include UserAuthMethods

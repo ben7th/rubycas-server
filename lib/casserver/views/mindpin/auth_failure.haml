@@ -1,0 +1,16 @@
+:ruby
+  code    = @error.code
+  message = @error.message
+  url = {
+    'pophour' => 'http://dev.www.pophour.com:3001/ajax_login_failure',
+    '17ngo'   => 'http://dev.www.17ngo.com:3002/ajax_login_failure',
+  }[@app]
+  
+  js = "location.replace('#{url}?code=#{code}&message=#{message}')"
+
+%html
+  %head
+    %title 登录失败
+  %body
+    :javascript
+      #{js}

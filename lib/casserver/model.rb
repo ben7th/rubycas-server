@@ -52,11 +52,6 @@ module CASServer::Model
     end
   end
 
-  class LoginTicket < Ticket
-    set_table_name 'casserver_lt'
-    include Consumable
-  end
-
   class ServiceTicket < Ticket
     set_table_name 'casserver_st'
     include Consumable
@@ -73,12 +68,6 @@ module CASServer::Model
     end
   end
 
-  class ProxyTicket < ServiceTicket
-    belongs_to :granted_by_pgt,
-      :class_name => 'CASServer::Model::ProxyGrantingTicket',
-      :foreign_key => :granted_by_pgt_id
-  end
-
   class TicketGrantingTicket < Ticket
     set_table_name 'casserver_tgt'
 
@@ -87,14 +76,6 @@ module CASServer::Model
     has_many :granted_service_tickets,
       :class_name => 'CASServer::Model::ServiceTicket',
       :foreign_key => :granted_by_tgt_id
-  end
-
-  class ProxyGrantingTicket < Ticket
-    set_table_name 'casserver_pgt'
-    belongs_to :service_ticket
-    has_many :granted_proxy_tickets,
-      :class_name => 'CASServer::Model::ProxyTicket',
-      :foreign_key => :granted_by_pgt_id
   end
 
   class Error

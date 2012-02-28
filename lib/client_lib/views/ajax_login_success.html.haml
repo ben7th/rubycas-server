@@ -1,0 +1,11 @@
+:ruby
+  code = params[:code]
+  message = params[:message]
+  
+  js = "parent.SSOController.callback({'result':true,'url':'/'})"
+
+%html
+  %head
+    :javascript
+      #{js}
+  %body
